@@ -17,7 +17,7 @@ export function proxy(request) {
         return NextResponse.redirect(new URL('/', request.url));
     }
     if (temSessao && ehPaginaLogin) {
-        return NextResponse.redirect(new URL('/inicio', request.url));
+                return NextResponse.redirect(new URL('/Inicio', request.url));
     }
     return NextResponse.next();
 }

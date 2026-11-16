@@ -2,13 +2,17 @@
 
 import { App, Button, Flex, Form, Input, Modal, Popconfirm, Select, Space, Table } from 'antd';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Crud({ titulo, colunas, campos, registros, salvar, excluir, busca }) {
     const [form] = Form.useForm();
     const [aberto, setAberto] = useState(false);
+    const [montado, setMontado] = useState(false);
     const router = useRouter();
     const { message } = App.useApp();
+
+    // o Modal usa Portal, que só funciona no navegador
+    useEffect(() => setMontado(true), []);
 
     function abrir(registro = {}) {
         form.resetFields();
@@ -68,31 +72,32 @@ export default function Crud({ titulo, colunas, campos, registros, salvar, exclu
                 scroll={{ x: true }}
             />
 
-            <Modal
-                title={titulo}
-                open={aberto}
-                onCancel={() => setAberto(false)}
-                onOk={form.submit}
-                okText="Salvar"
-                cancelText="Cancelar"
-                forceRender
-                getContainer={false}>
-                <Form form={form} layout="vertical" onFinish={(dados) => executar(salvar, dados)}>
-                    <Form.Item name="id" hidden>
-                        <Input />
-                    </Form.Item>
-                    {campos.map(({ name, label, opcoes, tipo, opcional }) => (
-                        <Form.Item
-                            key={name}
-                            name={name}
-                            label={label}
-                            rules={[{ required: !opcional, message: 'Campo obrigatório' }]}
-                            normalize={(valor) => (valor === '' || valor === undefined ? null : valor)}>
-                            {opcoes ? <Select options={opcoes} /> : <Input type={tipo} />}
+            {montado && (
+                <Modal
+                    title={titulo}
+                    open={aberto}
+                    onCancel={() => setAberto(false)}
+                    onOk={form.submit}
+                    okText="Salvar"
+                    cancelText="Cancelar"
+                    forceRender>
+                    <Form form={form} layout="vertical" onFinish={(dados) => executar(salvar, dados)}>
+                        <Form.Item name="id" hidden>
+                            <Input />
                         </Form.Item>
-                    ))}
-                </Form>
-            </Modal>
+                        {campos.map(({ name, label, opcoes, tipo, opcional }) => (
+                            <Form.Item
+                                key={name}
+                                name={name}
+                                label={label}
+                                rules={[{ required: !opcional, message: 'Campo obrigatório' }]}
+                                normalize={(valor) => (valor === '' || valor === undefined ? null : valor)}>
+                                {opcoes ? <Select options={opcoes} /> : <Input type={tipo} />}
+                            </Form.Item>
+                        ))}
+                    </Form>
+                </Modal>
+            )}
         </Flex>
     );
 }

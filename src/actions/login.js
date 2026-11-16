@@ -29,5 +29,5 @@ export async function entrar({ nome, senha }) {
 
 export async function sair() {
     (await cookies()).delete('token');
-    redirect('/');
+        redirect('/Inicio');
 }

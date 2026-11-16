@@ -20,7 +20,7 @@ export default async function Header() {
             wrap
             gap={16}>
             <Flex gap={16} component="nav">
-                <Link href="/inicio">Início</Link>
+                <Link href="/Inicio">Início</Link>
                 <Link href="/Clientes">Clientes</Link>
                 <Link href="/Imoveis">Imoveis</Link>
                 <Link href="/Alugueis">Alugueis</Link>
