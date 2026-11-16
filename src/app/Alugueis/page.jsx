@@ -1,24 +1,41 @@
-'use server';
-
+import { excluir, salvar } from '@actions/alugueis';
+import Crud from '@components/Crud';
 import { prisma } from '@lib/prisma';
-import { revalidatePath } from 'next/cache';
 
-export async function salvar({ id, data, ...dados }) {
-    try {
-        const registro = { ...dados, data: new Date(data) };
-        if (id) await prisma.alugueis.update({ where: { id }, data: registro });
-        else await prisma.alugueis.create({ data: registro });
-    } catch {
-        return { erro: 'Erro ao salvar o aluguel' };
-    }
-    revalidatePath('/Alugueis');
-}
+const colunas = [
+    { title: 'Data', dataIndex: 'data' },
+    { title: 'Imóvel', dataIndex: 'imovel' },
+    { title: 'Cliente', dataIndex: 'cliente' },
+];
 
-export async function excluir(id) {
-    try {
-        await prisma.alugueis.delete({ where: { id } });
-    } catch {
-        return { erro: 'Erro ao excluir o aluguel' };
-    }
-    revalidatePath('/Alugueis');
+export default async function Alugueis() {
+    const [alugueis, imoveis] = await Promise.all([
+        prisma.alugueis.findMany({
+            orderBy: { data: 'desc' },
+            include: { imoveis: { include: { clientes: true } } },
+        }),
+        prisma.imoveis.findMany({
+            orderBy: { tipo: 'asc' },
+            include: { clientes: true },
+        }),
+    ]);
+
+    const registros = alugueis.map(({ id, data, imoveis_id, imoveis }) => ({
+        id,
+        imoveis_id,
+        data: data.toISOString().slice(0, 10),
+        imovel: `${imoveis.tipo} (${imoveis.comodos} cômodos)`,
+        cliente: imoveis.clientes.nome,
+    }));
+
+    const campos = [
+        { name: 'data', label: 'Data', tipo: 'date' },
+        {
+            name: 'imoveis_id',
+            label: 'Imóvel',
+            opcoes: imoveis.map((v) => ({ value: v.id, label: `${v.tipo} (${v.clientes.nome})` })),
+        },
+    ];
+
+    return <Crud titulo="Aluguéis" {...{ colunas, campos, registros, salvar, excluir }} />;
 }

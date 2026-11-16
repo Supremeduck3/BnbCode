@@ -13,15 +13,15 @@ export async function salvar({ id, ...dados }) {
         if (e.code === 'P2002') return { erro: 'CPF já cadastrado' };
         return { erro: 'Erro ao salvar o cliente' };
     }
-    revalidatePath('/clientes');
+    revalidatePath('/Clientes');
 }
 
 export async function excluir(id) {
     try {
         await prisma.clientes.delete({ where: { id } });
     } catch (e) {
-        if (e.code === 'P2003') return { erro: 'Cliente possui veículos cadastrados' };
+        if (e.code === 'P2003') return { erro: 'Cliente possui imóveis cadastrados' };
         return { erro: 'Erro ao excluir o cliente' };
     }
-    revalidatePath('/clientes');
+    revalidatePath('/Clientes');
 }
