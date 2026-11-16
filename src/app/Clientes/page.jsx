@@ -1,32 +1,27 @@
-import { excluir, salvar } from '@actions/clientes';
-import Crud from '@components/Crud';
-import { descriptografar } from '@lib/cripto';
+'use server';
+
+import { criptografar } from '@lib/cripto';
 import { prisma } from '@lib/prisma';
+import { revalidatePath } from 'next/cache';
 
-const colunas = [
-    { title: 'Nome', dataIndex: 'nome' },
-    { title: 'CPF', dataIndex: 'cpf' },
-    { title: 'Endereço', dataIndex: 'endereco' },
-    { title: 'Celular', dataIndex: 'celular' },
-];
+export async function salvar({ id, ...dados }) {
+    try {
+        const data = { ...dados, cpf: criptografar(dados.cpf) };
+        if (id) await prisma.clientes.update({ where: { id }, data });
+        else await prisma.clientes.create({ data });
+    } catch (e) {
+        if (e.code === 'P2002') return { erro: 'CPF já cadastrado' };
+        return { erro: 'Erro ao salvar o cliente' };
+    }
+    revalidatePath('/Clientes');
+}
 
-const campos = [
-    { name: 'nome', label: 'Nome' },
-    { name: 'cpf', label: 'CPF' },
-    { name: 'endereco', label: 'Endereço' },
-    { name: 'celular', label: 'Celular' },
-];
-
-export default async function Clientes({ searchParams }) {
-    const { busca = '' } = await searchParams;
-    const termo = busca.toLowerCase();
-
-    const clientes = await prisma.clientes.findMany({ orderBy: { nome: 'asc' } });
-    const registros = clientes
-        .map((cliente) => ({ ...cliente, cpf: descriptografar(cliente.cpf) }))
-        .filter(
-            (cliente) => cliente.nome.toLowerCase().includes(termo) || cliente.cpf.includes(termo),
-        );
-
-    return <Crud titulo="Clientes" {...{ colunas, campos, registros, salvar, excluir, busca }} />;
+export async function excluir(id) {
+    try {
+        await prisma.clientes.delete({ where: { id } });
+    } catch (e) {
+        if (e.code === 'P2003') return { erro: 'Cliente possui imóveis cadastrados' };
+        return { erro: 'Erro ao excluir o cliente' };
+    }
+    revalidatePath('/Clientes');
 }

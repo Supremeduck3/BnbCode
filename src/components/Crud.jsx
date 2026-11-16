@@ -75,7 +75,8 @@ export default function Crud({ titulo, colunas, campos, registros, salvar, exclu
                 onOk={form.submit}
                 okText="Salvar"
                 cancelText="Cancelar"
-                forceRender>
+                forceRender
+                getContainer={false}>
                 <Form form={form} layout="vertical" onFinish={(dados) => executar(salvar, dados)}>
                     <Form.Item name="id" hidden>
                         <Input />
@@ -86,7 +87,7 @@ export default function Crud({ titulo, colunas, campos, registros, salvar, exclu
                             name={name}
                             label={label}
                             rules={[{ required: !opcional, message: 'Campo obrigatório' }]}
-                            normalize={(valor) => valor || null}>
+                            normalize={(valor) => (valor === '' || valor === undefined ? null : valor)}>
                             {opcoes ? <Select options={opcoes} /> : <Input type={tipo} />}
                         </Form.Item>
                     ))}
