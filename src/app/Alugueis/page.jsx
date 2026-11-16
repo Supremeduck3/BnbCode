@@ -20,7 +20,7 @@ export default async function Page() {
         }),
     ]);
 
-    const registro = alugueis.map(({ id, data, imoveis_id, imoveis }) => ({
+    const registros = alugueis.map(({ id, data, imoveis_id, imoveis }) => ({
         id,
         imoveis_id,
         data: data.toISOString().slice(0, 10),
@@ -37,5 +37,5 @@ export default async function Page() {
         },
     ];
 
-    return <Crud titulo="Aluguéis" {...{ colunas, campos, registro, salvar, excluir }} />;
+    return <Crud titulo="Aluguéis" {...{ colunas, campos, registros, salvar, excluir }} />;
 }

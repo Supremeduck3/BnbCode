@@ -5,8 +5,8 @@ import { revalidatePath } from 'next/cache';
 
 export async function salvar({ id, ...data }) {
     try {
-        if (id) await prisma.veiculo.update({ where: { id }, data });
-        else await prisma.veiculo.create({ data });
+        if (id) await prisma.imoveis.update({ where: { id }, data });
+        else await prisma.imoveis.create({ data });
     } catch {
         return { erro: 'Erro ao salvar o imoveis' };
     }
@@ -15,7 +15,7 @@ export async function salvar({ id, ...data }) {
 
 export async function excluir(id) {
     try {
-        await prisma.veiculo.delete({ where: { id } });
+        await prisma.imoveis.delete({ where: { id } });
     } catch (e) {
         if (e.code === 'P2003') return { erro: 'Esse imovel possui um aluguel cadastrados' };
         return { erro: 'Erro ao excluir o imovel' };

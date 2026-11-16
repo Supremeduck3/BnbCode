@@ -23,7 +23,7 @@ export default async function Imoveis() {
 
     const campos = [
         { name: 'tipo', label: 'Tipo' },
-        { name: 'comodos', label: 'Cômodos', type: 'number' },
+        { name: 'comodos', label: 'Cômodos', tipo: 'number' },
         {
             name: 'disponivel',
             label: 'Disponível',
