@@ -31,7 +31,7 @@ model imoveis {
   clientes    clientes   @relation(fields: [clientes_id], references: [id])
   Alugueis    Alugueis[]
 }
-model alugueis {
+model Alugueis {
   id         Int      @id @default(autoincrement())
   data       DateTime @db.Date
   imoveis_id Int

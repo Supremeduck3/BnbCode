@@ -21,9 +21,9 @@ export default async function Header() {
             gap={16}>
             <Flex gap={16} component="nav">
                 <Link href="/inicio">Início</Link>
-                <Link href="/clientes">Clientes</Link>
-                <Link href="/veiculos">Veículos</Link>
-                <Link href="/agendamentos">Agendamentos</Link>
+                <Link href="/Clientes">Clientes</Link>
+                <Link href="/Imoveis">Veículos</Link>
+                <Link href="/Alugueis">Alugueis</Link>
             </Flex>
             <Flex gap={16} align="center">
                 <span>Olá, {usuario.nome}</span>
